@@ -42,3 +42,93 @@ int main()
     }
     return 0;
 }
+void CharCount(char path[]) //字符统计函数
+{
+    FILE *fp=NULL;
+    int c = 0;
+    char ch;
+    char *path_1 = path;
+    int k = strlen(path);
+    *(path_1 + k-1) = '\0';
+    if ((fp = fopen(path_1 , "r")) == NULL)
+    {
+        printf("file read failure.");
+        exit(0);
+    }
+    ch = fgetc(fp);
+    while (ch != EOF)
+    {
+        c++;
+        ch = fgetc(fp);
+    }
+    printf("char count is ：%d\n", c);
+    fclose(fp);
+}
+
+void WordCount(char path[]) //单词统计函数
+{
+    FILE *fp;
+    int w = 0;
+    char ch;
+    char *path_1 = path;
+    int k = strlen(path);
+    *(path_1 + k - 1) = '\0';
+    if ((fp = fopen(path_1, "r")) == NULL)
+    {
+        printf("file read failure.");
+        exit(0);
+    }
+    //fgetc()会返回读取到的字符，若返回EOF则表示到了文件尾，或出现了错误。
+    ch = fgetc(fp);
+    while (ch != EOF)
+    {
+        if ((ch >= 'a'&&ch <= 'z') || (ch >= 'A'&&ch <= 'Z') || (ch >= '0'&&ch <= '9'))//非空
+        {
+            while ((ch >= 'a'&&ch <= 'z') || (ch >= 'A'&&ch <= 'Z') || (ch >= '0'&&ch <= '9') || ch == '_')
+            {
+                ch = fgetc(fp);//直到遇见非字母/数字/下划线
+            }
+            w++;
+            ch = fgetc(fp);
+        }
+        else
+        {
+            ch = fgetc(fp);
+        }
+    }
+    printf("word count is ：%d.\n", w);
+    fclose(fp);
+
+}
+
+void LineCount(char path[]) //行数统计函数
+{
+    FILE *fp;
+    int l = 1;
+    char ch;
+    char *path_1 = path;
+    int k = strlen(path);
+    *(path_1 + k - 1) = '\0';
+    if ((fp = fopen(path_1, "r")) == NULL)
+    {
+        printf("file read failure.");
+        exit(0);
+    }
+    //fgetc()会返回读取到的字符，若返回EOF则表示到了文件尾，或出现了错误。
+    ch = fgetc(fp);
+    while (ch != EOF)
+    {
+        if (ch == '\n')
+        {
+            l++;
+            ch = fgetc(fp);
+        }
+        else
+        {
+            ch = fgetc(fp);
+        }
+    }
+    l--;
+    printf("line count is ：%d.\n", l);
+    fclose(fp);
+}
