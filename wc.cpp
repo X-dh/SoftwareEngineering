@@ -6,7 +6,7 @@ using namespace std;
 void CharCount(char path[]);  //字符统计函数
 void WordCount(char path[]);  //单词统计函数
 void LineCount(char path[]);  //行数统计函数
-void Muiltiple(char path[]);  //综合统计函数，包括代码行，空行，注释行
+void AllCount(char path[]);  //综合统计函数，包括代码行，空行，注释行
 int main()
 {
     char input[100],path[50];
@@ -36,7 +36,7 @@ int main()
         }
         if ((input[i] == '-') && (input[i + 1] == 'a'))
         {
-            Muiltiple(path);
+            AllCount(path);
             break;
         }
     }
@@ -116,6 +116,7 @@ void LineCount(char path[]) //行数统计函数
     }
     //fgetc()会返回读取到的字符，若返回EOF则表示到了文件尾，或出现了错误。
     ch = fgetc(fp);
+    //如果是换行符则l（line）++，否则继续读取下一个字符
     while (ch != EOF)
     {
         if (ch == '\n')
@@ -128,7 +129,64 @@ void LineCount(char path[]) //行数统计函数
             ch = fgetc(fp);
         }
     }
-    l--;
     printf("line count is ：%d.\n", l);
     fclose(fp);
 }
+void AllCount(char path[])  //综合统计函数，包括代码行，空行，注释行
+{
+    FILE *fp;
+    char ch;
+    char *path_1 = path;
+    int k = strlen(path);
+    *(path_1 + k - 1) = '\0';
+    int c = 0, e = 0, n = 0;
+    if ((fp = fopen(path_1, "r")) == NULL)
+    {
+        printf("file read failure.");
+        exit(0);
+    }
+    //fgetc()会返回读取到的字符，若返回EOF则表示到了文件尾，或出现了错误。
+    ch = fgetc(fp);
+    while (ch != EOF)
+    {
+        if (ch == '{' || ch == '}')
+        {
+            e++;
+            ch = fgetc(fp);
+        }
+        else if (ch == '\n')
+        {
+            ch = fgetc(fp);
+            while (ch == '\n')
+            {
+                e++;
+                ch = fgetc(fp);
+            }
+        }
+        else if (ch == '/')
+        {
+            ch = fgetc(fp);
+            if (ch == '/')
+            while (ch != '\n')
+            {
+                ch = fgetc(fp);
+            }
+            n++;
+            ch = fgetc(fp);
+        }
+        else
+        {
+            c++;
+            while (ch != '{'&&ch != '}'&&ch != '\n'&&ch != '/'&&ch != EOF)
+            {
+                ch = fgetc(fp);
+            }
+        }
+
+    }
+    printf("code line count is ：%d.\n", c);
+    printf("empt line count is ：%d.\n", e);
+    printf("note line count is ：%d.\n", n);
+    fclose(fp);
+}
+
